@@ -1,0 +1,27 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="layout.CategoriesFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Categories"
+        android:id="@+id/categoriesTV"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="true"
+        android:foregroundGravity="center_horizontal"
+        android:gravity="center_horizontal" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/categoriesLV"
+        android:layout_below="@+id/categoriesTV"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>
