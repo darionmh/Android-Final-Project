@@ -1,7 +1,5 @@
 package com.example.s510607.finalproject;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -10,20 +8,13 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.example.s510607.finalproject.LoginFragment;
+import com.kinvey.android.Client;
+import com.kinvey.android.callback.KinveyUserCallback;
+import com.kinvey.java.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.kinvey.android.AsyncAppData;
-import com.kinvey.android.Client;
-import com.kinvey.android.callback.KinveyListCallback;
-import com.kinvey.android.callback.KinveyPingCallback;
-import com.kinvey.android.callback.KinveyUserCallback;
-import com.kinvey.java.Query;
-import com.kinvey.java.User;
-import com.kinvey.java.core.KinveyClientCallback;
 
 public class MainActivity extends AppCompatActivity implements CartFragment.CartListener{
 

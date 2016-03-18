@@ -3,13 +3,13 @@ package com.example.s510607.finalproject;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
-import com.example.s510607.finalproject.R;
 
 import java.util.ArrayList;
 
@@ -34,6 +34,18 @@ public class StoresFragment extends Fragment {
         ListView storesLV = (ListView) view.findViewById(R.id.storesLV);
         ArrayAdapter<String> storesAA = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, stores);
         storesLV.setAdapter(storesAA);
+        assert storesLV != null;
+        storesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                CategoriesFragment categoriesFragment = new CategoriesFragment();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container,categoriesFragment );
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
 
         return view;
     }
