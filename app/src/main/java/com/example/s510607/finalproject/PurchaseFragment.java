@@ -13,6 +13,11 @@ import com.example.s510607.finalproject.R;
  */
 public class PurchaseFragment extends Fragment {
 
+    interface purchaseCommunicator //Interface to send and receive information from the MainActivity
+    {
+        public void purchaseSender();
+        public void purchaseReceiver();
+    }
 
     public PurchaseFragment() {
         // Required empty public constructor
@@ -27,3 +32,5 @@ public class PurchaseFragment extends Fragment {
     }
 
 }
+
+

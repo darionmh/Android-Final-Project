@@ -12,7 +12,10 @@ import android.view.ViewGroup;
  */
 public class OrderFragment extends Fragment {
 
-
+    interface orderCommunicator //Interface to send and receive information from the MainActivity
+    {
+        public void sendQuantity(int quantity);
+    }
     public OrderFragment() {
         // Required empty public constructor
     }
@@ -21,8 +24,11 @@ public class OrderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_order, container, false);
+        View view = inflater.inflate(R.layout.fragment_order, container, false);
+
+        return view;
     }
+
+
 
 }
