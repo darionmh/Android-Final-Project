@@ -118,22 +118,29 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
                         }
                     });
                 } else {
-                    //Need to get stores somehow
-                    //Figure out how they will be stored
-                    stores.add("Mex");
-                    stores.add("Zen");
-                    stores.add("Chick");
+                    Query myQuery = client.query();
+                    final AsyncAppData<Store> storeData = client.appData("stores", Store.class);
+                    storeData.get(myQuery, new KinveyListCallback<Store>() {
+                        @Override
+                        public void onSuccess(Store[] stores) {
+                            Log.v("TAG", "received " + stores.length + " stores");
 
-                    StoresFragment storesFragment = new StoresFragment();
+                            StoresFragment storesFragment = new StoresFragment();
+                            storesFragment.setStores(stores);
 
-                    Bundle args = new Bundle();
-                    args.putStringArrayList("stores", stores);
-                    storesFragment.setArguments(args);
+                            android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+                            android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+                            transaction.replace(R.id.fragment_container, storesFragment);
+                            transaction.commit();
+                        }
 
-                    android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-                    android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
-                    transaction.replace(R.id.fragment_container, storesFragment);
-                    transaction.commit();
+                        @Override
+                        public void onFailure(Throwable error) {
+                            Log.e("TAG", "failed to fetchByFilterCriteria", error);
+                            Toast.makeText(getApplicationContext(), "Unable to get stores, please try again.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
                 }
 
 
@@ -207,9 +214,14 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
         client.user().create(username.getText().toString(), password.getText().toString(), new KinveyUserCallback() {
             @Override
             public void onFailure(Throwable t) {
-                CharSequence text = "Could not sign up.";
-                Log.d("TAGGER", t.toString());
-                Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+                if(client.user().isUserLoggedIn()){
+                    client.user().logout().execute();
+                    register(null);
+                }else {
+                    CharSequence text = "Could not sign up.";
+                    Log.d("TAGGER", t.toString());
+                    Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override

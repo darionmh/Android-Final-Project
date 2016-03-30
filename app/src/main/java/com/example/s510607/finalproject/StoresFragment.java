@@ -18,7 +18,7 @@ import java.util.ArrayList;
  */
 public class StoresFragment extends Fragment {
 
-    ArrayList<String> stores;
+    Store[] stores;
     public StoresFragment() {
         // Required empty public constructor
     }
@@ -29,25 +29,34 @@ public class StoresFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_stores, container, false);
-        stores = getArguments().getStringArrayList("stores");
+
+        ArrayList<String> storeNames = new ArrayList<>();
+        for(Store s:stores){
+            storeNames.add(s.getName());
+        }
 
         ListView storesLV = (ListView) view.findViewById(R.id.storesLV);
-        ArrayAdapter<String> storesAA = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, stores);
+        ArrayAdapter<String> storesAA = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, storeNames);
         storesLV.setAdapter(storesAA);
-        assert storesLV != null;
+
         storesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 CategoriesFragment categoriesFragment = new CategoriesFragment();
+                categoriesFragment.setStore(stores[position]);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.addToBackStack("stores");
                 transaction.replace(R.id.fragment_container,categoriesFragment );
-                transaction.addToBackStack(null);
                 transaction.commit();
             }
         });
 
         return view;
+    }
+
+    public void setStores(Store[] stores){
+        this.stores = stores;
     }
 
 }

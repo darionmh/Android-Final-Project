@@ -16,8 +16,8 @@ import android.widget.ListView;
  */
 public class CategoriesFragment extends Fragment {
 
-    //dummy string categories for now
-    String[] categoriesdata= {"Breakfast","Meal","Desserts","Side Items"};
+    Store store;
+
     public CategoriesFragment() {
         // Required empty public constructor
 
@@ -28,15 +28,17 @@ public class CategoriesFragment extends Fragment {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_categories, container, false);
         ListView categoriesLV = (ListView) view.findViewById(R.id.categoriesLV);
-        ArrayAdapter<String> CategoriesAA = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, categoriesdata);
+        ArrayAdapter<String> CategoriesAA = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, store.getAllCategories());
         categoriesLV.setAdapter(CategoriesAA);
         categoriesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String categoryName = store.getAllCategories().get(position);
                 ItemsFragment itemFragment = new ItemsFragment();
+                itemFragment.setCategory(store.getCategory(categoryName));
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.fragment_container,itemFragment );
-                transaction.addToBackStack(null);
+                transaction.addToBackStack("categories");
                 transaction.commit();
             }
         });
@@ -44,4 +46,7 @@ public class CategoriesFragment extends Fragment {
 
     }
 
+    public void setStore(Store store){
+        this.store = store;
+    }
 }
