@@ -2,12 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.s510607.finalproject.StoreManagementItemsFragment">
+    tools:context=".StoreManagementCategoriesFragment">
 
+    <!-- TODO: Update blank fragment layout -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -17,15 +17,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Leave Category"
-                android:onClick="leaveCategory"/>
+                android:text="Save Changes"
+                android:onClick="updateStore"/>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Save Changes"
-                android:onClick="updateStore"/>
+                android:text="Logout"
+                android:onClick="logout"/>
 
         </LinearLayout>
 
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/StoreNameTV"
             android:layout_alignParentBottom="true"
-            android:id="@+id/itemsLV"/>
+            android:id="@+id/categoriesLV"/>
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
@@ -51,7 +51,7 @@
             android:layout_margin="16dp"
             android:id="@+id/fab"
             android:clickable="true"
-            android:onClick="openAddItemDialog"/>
+            android:onClick="openAddCategoryDialog"/>
     </RelativeLayout>
 
 </FrameLayout>

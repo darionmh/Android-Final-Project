@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:padding="5dp">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Item Name"
+        android:id="@+id/itemNameET"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/itemPriceET"
+        android:text="$"
+        android:id="@+id/currencyTV"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/itemNameET"
+        android:layout_toRightOf="@+id/currencyTV"
+        android:layout_alignParentRight="true"
+        android:hint="Item Price"
+        android:inputType="numberDecimal"
+        android:id="@+id/itemPriceET"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/itemPriceET"
+        android:lines="4"
+        android:hint="Item Description"
+        android:id="@+id/itemDescET"/>
+</RelativeLayout>

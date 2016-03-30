@@ -52,6 +52,10 @@ public class Category extends GenericJson {
         return items.get(name);
     }
 
+    public ArrayList<Item> getItems(){
+        return new ArrayList<Item>(items.values());
+    }
+
     public int renameItem(String oldName, String newName){
         if(!items.containsKey(oldName)){
             return 0;
