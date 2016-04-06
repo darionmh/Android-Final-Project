@@ -36,7 +36,7 @@ public class StoreManagementItemsFragment extends Fragment {
         // Inflate the layout for this fragment
         view =  inflater.inflate(R.layout.fragment_store_management_items, container, false);
         category = getArguments().getString("category");
-        items = new ArrayList<Item>();
+        if(items == null)items = new ArrayList<Item>();
 
         buildListView();
 
@@ -54,6 +54,9 @@ public class StoreManagementItemsFragment extends Fragment {
 
         title.setText(category);
 
+        if(items.isEmpty()){
+            items.add(new Item("There are no items.", "", 0));
+        }
         ItemArrayAdapter CategoriesAA = new ItemArrayAdapter(getContext(), R.layout.item_list_item, R.id.itemNameTV,items);
 
         categoriesLV.setAdapter(CategoriesAA);

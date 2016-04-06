@@ -372,11 +372,14 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
     }
 
     public void addItem(Item item, String category){
-        if(currentStore.getCategory(category).addItem(item)){
+        boolean success = currentStore.getCategory(category).addItem(item);
+        if(success){
             android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
             StoreManagementItemsFragment fragment = (StoreManagementItemsFragment) fragmentManager.findFragmentById(R.id.fragment_container);
             fragment.updateListView(currentStore.getCategory(category).getItems());
             unsavedChanges = true;
+        }else{
+            Toast.makeText(getApplicationContext(),"Item already exists", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -11,7 +11,7 @@ import android.view.ViewGroup;
  * A simple {@link Fragment} subclass.
  */
 public class ItemsFragment extends Fragment {
-
+    Category category;
 
     public ItemsFragment() {
         // Required empty public constructor
@@ -23,6 +23,10 @@ public class ItemsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_items, container, false);
+    }
+
+    public void setCategory(Category category){
+        this.category = category;
     }
 
 }
