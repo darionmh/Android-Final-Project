@@ -1,7 +1,9 @@
 package com.example.s510607.finalproject;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,8 +30,9 @@ public class StoreManagementCategoriesFragment extends Fragment{
     private String storeName;
 
     public interface StoreManagementCategoriesListener{
-        public ArrayList<Item> getItems(String category);
         public ArrayList<String> getCategories();
+        public void renameCategory(String oldName, String newName);
+        public void deleteCategory(String category);
     }
 
     private StoreManagementCategoriesListener storeManagementCategoriesListener;
@@ -46,7 +50,6 @@ public class StoreManagementCategoriesFragment extends Fragment{
         storeName = getArguments().getString("store_name");
 
         buildListView();
-
         return rootView;
     }
 
@@ -57,7 +60,7 @@ public class StoreManagementCategoriesFragment extends Fragment{
     }
 
     public void buildListView(){
-        ListView categoriesLV = (ListView) rootView.findViewById(R.id.categoriesLV);
+        final ListView categoriesLV = (ListView) rootView.findViewById(R.id.categoriesLV);
         TextView title = (TextView) rootView.findViewById(R.id.StoreNameTV);
 
         title.setText(storeName);
@@ -71,14 +74,66 @@ public class StoreManagementCategoriesFragment extends Fragment{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 StoreManagementItemsFragment itemFragment = new StoreManagementItemsFragment();
-                itemFragment.updateListView(storeManagementCategoriesListener.getItems(categoryList.get(position)));
                 Bundle bundle = new Bundle();
                 bundle.putString("category", categoryList.get(position));
                 itemFragment.setArguments(bundle);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container,itemFragment );
-                transaction.addToBackStack(null);
+                transaction.replace(R.id.fragment_container, itemFragment);
                 transaction.commit();
+            }
+        });
+
+        categoriesLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                LayoutInflater li = LayoutInflater.from(getActivity());
+
+                final View dialogView = li.inflate(R.layout.category_rename_dialog, null);
+                final EditText categoryName = (EditText) dialogView.findViewById(R.id.categoryET);
+                final String oldName = categoryList.get(position);
+
+                categoryName.setText(oldName);
+
+                builder.setView(dialogView);
+                builder.setTitle("Add Item");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        storeManagementCategoriesListener.renameCategory(oldName, categoryName.getText().toString());
+                        categoryList = storeManagementCategoriesListener.getCategories();
+                        buildListView();
+                    }
+                });
+                builder.setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle("Are you sure?")
+                                .setPositiveButton("Yes, delete.", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        storeManagementCategoriesListener.deleteCategory(oldName);
+                                        categoryList = storeManagementCategoriesListener.getCategories();
+                                        buildListView();
+                                    }
+                                })
+                                .setNegativeButton("No",null)
+                                .create().show();
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+
+
+                return true;
             }
         });
     }

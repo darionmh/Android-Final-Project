@@ -1,6 +1,7 @@
 package com.example.s510607.finalproject;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -29,6 +30,20 @@ public class StoreManagementItemsFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public interface StoreManagementItemsListener{
+        public ArrayList<Item> getItems(String category);
+        public void updateItem(Item item, String category);
+        public void renameItem(String oldName, String newName, String category);
+        public void deleteItem(Item item, String category);
+    }
+
+    StoreManagementItemsListener storeManagementItemsListener;
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        storeManagementItemsListener = (StoreManagementItemsListener) context;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,7 +51,7 @@ public class StoreManagementItemsFragment extends Fragment {
         // Inflate the layout for this fragment
         view =  inflater.inflate(R.layout.fragment_store_management_items, container, false);
         category = getArguments().getString("category");
-        if(items == null)items = new ArrayList<Item>();
+        if(items == null)items = storeManagementItemsListener.getItems(category);
 
         buildListView();
 
@@ -60,10 +75,41 @@ public class StoreManagementItemsFragment extends Fragment {
         ItemArrayAdapter CategoriesAA = new ItemArrayAdapter(getContext(), R.layout.item_list_item, R.id.itemNameTV,items);
 
         categoriesLV.setAdapter(CategoriesAA);
+
+        categoriesLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                ItemModificationDialog itemModificationDialog = new ItemModificationDialog();
+                itemModificationDialog.setItemsFragment(StoreManagementItemsFragment.this);
+                itemModificationDialog.setItemAndCategory(items.get(position), category);
+                itemModificationDialog.show(getActivity().getFragmentManager(), "Update Item");
+                return true;
+            }
+        });
     }
 
     public void updateListView(ArrayList<Item> list) {
         items = list;
+        buildListView();
+    }
+
+    public void updateItem(Item item, String name, double price, String description){
+        if(!name.equals(item.getName())){
+            storeManagementItemsListener.renameItem(item.getName(), name, category);
+        }
+
+        item.setName(name);
+        item.setPrice(price);
+        item.setDescription(description);
+
+        storeManagementItemsListener.updateItem(item, category);
+        items = storeManagementItemsListener.getItems(category);
+        buildListView();
+    }
+
+    public void deleteItem(Item item){
+        storeManagementItemsListener.deleteItem(item, category);
+        items = storeManagementItemsListener.getItems(category);
         buildListView();
     }
 

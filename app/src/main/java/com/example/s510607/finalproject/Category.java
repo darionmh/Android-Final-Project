@@ -42,9 +42,27 @@ public class Category extends GenericJson {
 
     public boolean removeItem(Item item){
         if(!items.containsKey(item.getName())){
+            if(items.containsValue(item)){
+                ArrayList<Item> values = new ArrayList(items.values());
+                ArrayList<String> keys = new ArrayList(items.keySet());
+
+                int itemIndex = values.indexOf(item);
+                String itemKey = keys.get(itemIndex);
+                items.remove(itemKey);
+                return true;
+            }
             return false;
         }
         items.remove(item.getName());
+        return true;
+    }
+
+    public boolean updateItem(Item item){
+        if(!items.containsKey(item.getName())){
+            return false;
+        }
+        items.remove(item.getName());
+        items.put(item.getName(),item);
         return true;
     }
 

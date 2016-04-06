@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.kinvey.android.AsyncAppData;
 import com.kinvey.android.Client;
 import com.kinvey.android.callback.KinveyListCallback;
+import com.kinvey.android.callback.KinveyPingCallback;
 import com.kinvey.android.callback.KinveyUserCallback;
 import com.kinvey.java.Query;
 import com.kinvey.java.User;
@@ -24,7 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements CartFragment.CartListener, StoreManagementCategoriesFragment.StoreManagementCategoriesListener{
+public class MainActivity extends AppCompatActivity implements CartFragment.CartListener, StoreManagementCategoriesFragment.StoreManagementCategoriesListener,
+        StoreManagementItemsFragment.StoreManagementItemsListener{
 
     Map<Item, Integer> cart;
     ArrayList<String> stores;
@@ -48,9 +50,7 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
 
         client = new Client.Builder("kid_-157iCrY1Z", "dd0301a74f0b40da811ba1a8b340aa09", this.getApplicationContext()).build();
 
-        while(client.user().isUserLoggedIn()){
-            client.user().logout().execute();
-        }
+        client.user().logout().execute();
         unsavedChanges = false;
     }
 
@@ -214,10 +214,10 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
         client.user().create(username.getText().toString(), password.getText().toString(), new KinveyUserCallback() {
             @Override
             public void onFailure(Throwable t) {
-                if(client.user().isUserLoggedIn()){
+                if (client.user().isUserLoggedIn()) {
                     client.user().logout().execute();
                     register(null);
-                }else {
+                } else {
                     CharSequence text = "Could not sign up.";
                     Log.d("TAGGER", t.toString());
                     Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
@@ -305,6 +305,22 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
         return currentStore.getAllCategories();
     }
 
+    @Override
+    public void renameCategory(String oldName, String newName) {
+        if(currentStore.renameCategory(oldName, newName)==-1){
+            Toast.makeText(getApplicationContext(), "Category: "+newName+" already exists.", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(getApplicationContext(), "Change successful!", Toast.LENGTH_SHORT).show();
+            unsavedChanges = true;
+        }
+    }
+
+    @Override
+    public void deleteCategory(String category) {
+        currentStore.removeCategory(currentStore.getCategory(category));
+        unsavedChanges = true;
+    }
+
     public void updateStore(View v){
         AsyncAppData<Store> storeData = client.appData("stores", Store.class);
         storeData.save(currentStore, new KinveyClientCallback<Store>() {
@@ -322,41 +338,14 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
     }
 
     public void leaveCategory(View v){
-        if(unsavedChanges){
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("Are you sure?")
-                    .setView(R.layout.leave_dialog)
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            StoreManagementCategoriesFragment storeManagementCategoriesFragment = new StoreManagementCategoriesFragment();
-                            Bundle bundle = new Bundle();
-                            bundle.putString("store_name", currentStore.getName());
-                            storeManagementCategoriesFragment.setArguments(bundle);
-                            android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-                            android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
-                            transaction.replace(R.id.fragment_container, storeManagementCategoriesFragment);
-                            transaction.commit();
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .create();
-            builder.show();
-        }else{
-            StoreManagementCategoriesFragment storeManagementCategoriesFragment = new StoreManagementCategoriesFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString("store_name", currentStore.getName());
-            storeManagementCategoriesFragment.setArguments(bundle);
-            android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-            android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.fragment_container, storeManagementCategoriesFragment);
-            transaction.commit();
-        }
+        StoreManagementCategoriesFragment storeManagementCategoriesFragment = new StoreManagementCategoriesFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("store_name", currentStore.getName());
+        storeManagementCategoriesFragment.setArguments(bundle);
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.fragment_container, storeManagementCategoriesFragment);
+        transaction.commit();
     }
 
     public void addCategory(String name) {
@@ -444,5 +433,26 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
     public void onDestroy(){
         super.onDestroy();
         client.user().logout().execute();
+    }
+
+    @Override
+    public void updateItem(Item item, String category) {
+        currentStore.getCategory(category).updateItem(item);
+        Toast.makeText(getApplicationContext(), "Change successful", Toast.LENGTH_SHORT).show();
+        unsavedChanges = true;
+    }
+
+    @Override
+    public void renameItem(String oldName, String newName, String category) {
+        if(currentStore.getCategory(category).renameItem(oldName, newName)==-1){
+            Toast.makeText(getApplicationContext(), "Item name: "+newName+" already exists.", Toast.LENGTH_SHORT).show();
+        }else{
+            unsavedChanges = true;
+        }
+    }
+
+    @Override
+    public void deleteItem(Item item, String category) {
+        unsavedChanges = true;
     }
 }

@@ -51,4 +51,14 @@ public class Item extends GenericJson{
     public void setPrice(double price) {
         this.price = price;
     }
+
+    @Override
+    public boolean equals(Object o){
+        if(!(o instanceof Item))return false;
+        Item item = (Item) o;
+        if(!item.getName().equals(name))return false;
+        if(!(item.getPrice() == price))return false;
+        if(!item.getDescription().equals(description))return false;
+        return true;
+    }
 }
