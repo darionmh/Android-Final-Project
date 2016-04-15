@@ -48,7 +48,6 @@ public class ItemsFragment extends Fragment {
     public void setCategory(Category category){
         this.category = category;
     }
-
 }
 
 class ItemsArrayAdapter extends ArrayAdapter<Item> {
