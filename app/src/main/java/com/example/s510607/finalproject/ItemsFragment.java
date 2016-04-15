@@ -32,9 +32,12 @@ public class ItemsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_items, container, false);
-        itemsLV = (ListView) view.findViewById(R.id.itemsLV);
+        itemsLV = (ListView) view.findViewById(R.id.itemsLVCust);
         items = category.getItems();
-        itemAdapter = new ItemsArrayAdapter(getActivity(),R.layout.item_list_item,R.layout.fragment_items,items);
+        if(items.isEmpty()){
+            items.add(new Item("There are no items.", "", 0));
+        }
+        itemAdapter = new ItemsArrayAdapter(getActivity(),R.layout.item_list_item,R.id.itemNameTV,items);
         itemsLV.setAdapter(itemAdapter);
 
         return view;

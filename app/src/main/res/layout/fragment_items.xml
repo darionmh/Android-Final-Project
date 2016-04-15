@@ -18,7 +18,7 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/itemsLV"
+        android:id="@+id/itemsLVCust"
         android:layout_below="@+id/itemsTV"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>
