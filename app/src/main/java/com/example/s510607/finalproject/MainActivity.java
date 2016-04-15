@@ -26,10 +26,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements CartFragment.CartListener, StoreManagementCategoriesFragment.StoreManagementCategoriesListener,
-        StoreManagementItemsFragment.StoreManagementItemsListener,ItemsFragment.ItemsReceiver{
+        StoreManagementItemsFragment.StoreManagementItemsListener,ItemsFragment.ItemsReceiver,PurchaseFragment.purchaseCommunicator{
 
     Map<Item, Integer> cart;
     ArrayList<String> stores;
+    ArrayList<Purchase> purchases;
     Client client;
     Store currentStore;
     boolean unsavedChanges;
@@ -472,5 +473,11 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
     @Override
     public void ItemSend(Item item, int q) {
         cart.put(item, q);
+    }
+
+    @Override
+    public void purchaseSender(Purchase p) {
+        purchases.add(p);
+
     }
 }

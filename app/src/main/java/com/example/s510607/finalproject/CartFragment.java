@@ -25,6 +25,7 @@ public class CartFragment extends Fragment {
     Map<Item, Integer> cart;
     ListView cartLV;
     CartArrayAdapter cartAdapter;
+    double total = 0.0;
 
     CartListener cartListener;
     public interface CartListener{
@@ -41,6 +42,7 @@ public class CartFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_cart, container, false);
         cartLV = (ListView) view.findViewById(R.id.cartLV);
+        TextView totalTV = (TextView) view.findViewById(R.id.cartTotalCostTV);
         cart = cartListener.getCart();
         Set keys = cart.keySet();
         ArrayList<Item> cartList = new ArrayList<>();
@@ -52,6 +54,12 @@ public class CartFragment extends Fragment {
         }
         cartAdapter = new CartArrayAdapter(getActivity(),R.layout.cart_list_item,R.layout.fragment_cart,cartList,quantities);
         cartLV.setAdapter(cartAdapter);
+        for(int i = 0; i < cartList.size();i++)
+        {
+            total += cartList.get(i).getPrice() * quantities.get(i);
+        }
+        totalTV.setText(String.format("$%.2f", total));
+
 
 
         return view;

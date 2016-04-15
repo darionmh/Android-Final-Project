@@ -140,14 +140,16 @@
             android:layout_height="wrap_content"
             android:text="Cash"
             android:id="@+id/cashBTN"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:onClick="cashPressed" />
 
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Card"
             android:id="@+id/cardBTN"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:onClick="cardPressed" />
     </LinearLayout>
 
 </LinearLayout>
