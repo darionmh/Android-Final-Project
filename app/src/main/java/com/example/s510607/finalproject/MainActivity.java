@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements CartFragment.CartListener, StoreManagementCategoriesFragment.StoreManagementCategoriesListener,
-        StoreManagementItemsFragment.StoreManagementItemsListener{
+        StoreManagementItemsFragment.StoreManagementItemsListener {
 
     Map<Item, Integer> cart;
     ArrayList<String> stores;
