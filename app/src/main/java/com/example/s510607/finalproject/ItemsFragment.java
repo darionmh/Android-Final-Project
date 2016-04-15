@@ -1,13 +1,19 @@
 package com.example.s510607.finalproject;
 
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -22,6 +28,15 @@ public class ItemsFragment extends Fragment {
     ArrayList<Item> items;
     ListView itemsLV;
     ItemsArrayAdapter itemAdapter;
+    int quantity = 0;
+
+    Item itemToSend;
+
+    public interface ItemsReceiver{
+        public void ItemSend(Item item,int q);
+    }
+
+    ItemsReceiver iReceiver;
 
     public ItemsFragment() {
 
@@ -39,10 +54,64 @@ public class ItemsFragment extends Fragment {
         }
         itemAdapter = new ItemsArrayAdapter(getActivity(),R.layout.item_list_item,R.id.itemNameTV,items);
         itemsLV.setAdapter(itemAdapter);
+        itemsLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View clickView, final int position, long id) {
+
+                final Dialog d = new Dialog(getActivity());
+                d.setContentView(R.layout.quantity_dialog_layout);
+                d.setTitle("Select Quantity");
+                final EditText dialogET = (EditText) d.findViewById(R.id.quantityDialogET);
+                Button okButton = (Button) d.findViewById(R.id.dialogOKBTN);
+                Button cancel = (Button) d.findViewById(R.id.dialogCancelBTN);
+                okButton.setOnClickListener(new AdapterView.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (dialogET.getText().toString().equals("")) {
+                            d.cancel();
+                        }
+                        quantity = Integer.parseInt(dialogET.getText().toString());
+                        iReceiver.ItemSend(items.get(position), quantity);
+                        d.dismiss();
+                    }
+                });
+
+                cancel.setOnClickListener(new AdapterView.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        d.cancel();
+                    }
+                });
+                d.show();
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                builder.setView(R.layout.quantity_dialog_layout).setMessage("")
+//                        .setTitle("Select Quantity").setPositiveButton("Done", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        quantity = Integer.parseInt(((EditText) clickView.findViewById(R.id.quantityDialogET)).getText().toString());
+//                    }
+//                });
+//                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        quantity = 0;
+//                    }
+//                });
+//                AlertDialog myDialog = builder.create();
+//                myDialog.show();
+                quantity = 0;
+                return false;
+            }
+        });
+
+
 
         return view;
 
 
+    }
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        iReceiver = (ItemsReceiver) context;
     }
 
     public void setCategory(Category category){
@@ -70,5 +139,4 @@ class ItemsArrayAdapter extends ArrayAdapter<Item> {
 
         return view;
     }
-
 }
