@@ -436,7 +436,7 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
-/
+
     public void openAddItemDialog(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         LayoutInflater li = LayoutInflater.from(this);
