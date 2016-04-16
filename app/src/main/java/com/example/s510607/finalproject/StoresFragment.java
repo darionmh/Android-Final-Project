@@ -1,6 +1,7 @@
 package com.example.s510607.finalproject;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -24,6 +25,18 @@ public class StoresFragment extends Fragment {
     }
 
 
+    public interface StoreFragmentListener{
+        public void updateStore(Store store);
+    }
+
+    StoreFragmentListener storeFragmentListener;
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        storeFragmentListener = (StoreFragmentListener) context;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -42,9 +55,9 @@ public class StoresFragment extends Fragment {
         storesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 CategoriesFragment categoriesFragment = new CategoriesFragment();
                 categoriesFragment.setStore(stores[position]);
+                storeFragmentListener.updateStore(stores[position]);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.addToBackStack("stores");
                 transaction.replace(R.id.fragment_container,categoriesFragment );

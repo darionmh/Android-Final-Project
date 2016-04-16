@@ -28,14 +28,16 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Leave Category"
-            android:id="@+id/leaveCategoryCustBTN"
+            android:text="Leave Store"
+            android:onClick="customerLeaveStore"
+            android:id="@+id/leaveStoreCustBTN"
             android:layout_weight="1" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cart"
+            android:onClick="showCart"
             android:id="@+id/button2"
             android:layout_weight="1" />
     </LinearLayout>

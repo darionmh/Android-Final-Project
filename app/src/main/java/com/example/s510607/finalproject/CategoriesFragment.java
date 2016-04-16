@@ -43,12 +43,10 @@ public class CategoriesFragment extends Fragment {
                 itemFragment.setCategory(store.getCategory(categoryName));
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.fragment_container,itemFragment );
-                transaction.addToBackStack("categories");
                 transaction.commit();
             }
         });
         return view;
-
     }
 
     public void setStore(Store store){

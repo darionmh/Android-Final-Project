@@ -4,6 +4,7 @@ package com.example.s510607.finalproject;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +24,6 @@ import java.util.Set;
 public class CartFragment extends Fragment {
 
     Map<Item, Integer> cart;
-    ListView cartLV;
-    CartArrayAdapter cartAdapter;
     double total = 0.0;
 
     CartListener cartListener;
@@ -41,18 +40,23 @@ public class CartFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_cart, container, false);
-        cartLV = (ListView) view.findViewById(R.id.cartLV);
+        ListView cartLV = (ListView) view.findViewById(R.id.cartLV);
+
         TextView totalTV = (TextView) view.findViewById(R.id.cartTotalCostTV);
         cart = cartListener.getCart();
+
         Set keys = cart.keySet();
         ArrayList<Item> cartList = new ArrayList<>();
         cartList.addAll(keys);
         ArrayList<Integer> quantities = new ArrayList<>();
+        ArrayList<String> names = new ArrayList<>();
         for(int i = 0; i < cartList.size(); i++)
         {
             quantities.add(cart.get(cartList.get(i)));
+
+            names.add(cartList.get(i).getName());
         }
-        cartAdapter = new CartArrayAdapter(getActivity(),R.layout.cart_list_item,R.layout.fragment_cart,cartList,quantities);
+        CartArrayAdapter cartAdapter = new CartArrayAdapter(getContext(),R.layout.cart_list_item,R.id.cartItemNameTV,cartList,quantities);
         cartLV.setAdapter(cartAdapter);
         for(int i = 0; i < cartList.size();i++)
         {
@@ -60,13 +64,12 @@ public class CartFragment extends Fragment {
         }
         totalTV.setText(String.format("$%.2f", total));
 
-
-
         return view;
     }
 
     @Override
     public void onAttach(Context context){
+        super.onAttach(context);
         cartListener = (CartListener) context;
     }
 
@@ -92,6 +95,7 @@ class CartArrayAdapter extends ArrayAdapter<Item> {
         quantity.setText(itemQuantities.get(position));
         price.setText(String.format("$%.2f", currentItem.getPrice()));
 
+        Log.d("Test", String.format("%s\n%d\n%0.2f\n\n", currentItem.getName(), itemQuantities.get(position), currentItem.getPrice()));
         return view;
     }
 

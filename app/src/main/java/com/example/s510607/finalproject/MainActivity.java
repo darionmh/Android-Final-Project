@@ -3,6 +3,7 @@ package com.example.s510607.finalproject;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.Fade;
 import android.util.Log;
@@ -30,7 +31,7 @@ import java.util.Map;
 import layout.SplashsScreenFragment;
 
 public class MainActivity extends AppCompatActivity implements CartFragment.CartListener, StoreManagementCategoriesFragment.StoreManagementCategoriesListener,
-        StoreManagementItemsFragment.StoreManagementItemsListener,ItemsFragment.ItemsReceiver,PurchaseFragment.purchaseCommunicator{
+        StoreManagementItemsFragment.StoreManagementItemsListener,ItemsFragment.ItemsReceiver,PurchaseFragment.purchaseCommunicator, StoresFragment.StoreFragmentListener{
 
     HashMap<Item, Integer> cart;
     ArrayList<String> stores;
@@ -80,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
         });
     }
 
+    @Override
     public Map<Item, Integer> getCart(){
         return cart;
     }
@@ -366,6 +368,63 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
         });
     }
 
+    public void customerLeaveStore(View v){
+        if(!cart.isEmpty()){
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("You have items in your cart!");
+            builder.setPositiveButton("Checkout", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    showCart(null);
+                }
+            });
+            builder.setNegativeButton("Empty and Leave", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    cart.clear();
+                    reloadStore();
+                }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }else{
+            reloadStore();
+        }
+    }
+
+    public void showCart(View v){
+        CartFragment cartFragment = new CartFragment();
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.fragment_container, cartFragment);
+        transaction.commit();
+    }
+
+    public void reloadStore(){
+        Query myQuery = client.query();
+        final AsyncAppData<Store> storeData = client.appData("stores", Store.class);
+        storeData.get(myQuery, new KinveyListCallback<Store>() {
+            @Override
+            public void onSuccess(Store[] stores) {
+                Log.v("TAG", "received " + stores.length + " stores");
+
+                StoresFragment storesFragment = new StoresFragment();
+                storesFragment.setStores(stores);
+
+                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+                android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.replace(R.id.fragment_container, storesFragment);
+                transaction.commit();
+            }
+
+            @Override
+            public void onFailure(Throwable error) {
+                Log.e("TAG", "failed to fetchByFilterCriteria", error);
+                Toast.makeText(getApplicationContext(), "Unable to get stores, please try again.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     public void leaveCategory(View v){
         StoreManagementCategoriesFragment storeManagementCategoriesFragment = new StoreManagementCategoriesFragment();
         Bundle bundle = new Bundle();
@@ -377,17 +436,15 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
         transaction.commit();
     }
 
-//    public void leaveCategoryCustomer(View v)
-//    {
-//        CategoriesFragment categoriesFragment = new CategoriesFragment();
-//        Bundle bundle = new Bundle();
-//        bundle.putString("store_name", currentStore.getName());
-//        categoriesFragment.setArguments(bundle);
-//        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-//        android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
-//        transaction.replace(R.id.fragment_container, categoriesFragment);
-//        transaction.commit();
-//    }
+    public void backToCategories(View v){
+        CategoriesFragment categoriesFragment = new CategoriesFragment();
+        categoriesFragment.setStore(currentStore);
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.addToBackStack("stores");
+        transaction.replace(R.id.fragment_container,categoriesFragment );
+        transaction.commit();
+    }
 
 
     public void addCategory(String name) {
@@ -507,5 +564,10 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
     public void purchaseSender(Purchase p) {
         purchases.add(p);
 
+    }
+
+    @Override
+    public void updateStore(Store store) {
+        currentStore = store;
     }
 }
