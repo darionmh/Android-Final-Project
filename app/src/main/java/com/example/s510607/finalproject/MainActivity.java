@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Fade;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,13 +23,16 @@ import com.kinvey.java.User;
 import com.kinvey.java.core.KinveyClientCallback;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+
+import layout.SplashsScreenFragment;
 
 public class MainActivity extends AppCompatActivity implements CartFragment.CartListener, StoreManagementCategoriesFragment.StoreManagementCategoriesListener,
         StoreManagementItemsFragment.StoreManagementItemsListener{
 
-    Map<Item, Integer> cart;
+    HashMap<Item, Integer> cart;
     ArrayList<String> stores;
     Client client;
     Store currentStore;
@@ -42,16 +46,37 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
         cart = new HashMap<Item, Integer>();
         stores = new ArrayList<>();
 
-        LoginFragment loginFragment = new LoginFragment();
+        SplashsScreenFragment splashScreen = new SplashsScreenFragment();
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.fragment_container, loginFragment);
+        transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+        transaction.add(R.id.fragment_container, splashScreen);
         transaction.commit();
 
-        client = new Client.Builder("kid_-157iCrY1Z", "dd0301a74f0b40da811ba1a8b340aa09", this.getApplicationContext()).build();
-
+        client = new Client.Builder(this.getApplicationContext()).build();
         client.user().logout().execute();
         unsavedChanges = false;
+
+        client.ping(new KinveyPingCallback() {
+            @Override
+            public void onSuccess(Boolean aBoolean) {
+                int currentSeconds = Calendar.getInstance().get(Calendar.SECOND);
+                int endTime = (currentSeconds+3)%60;
+                while(Calendar.getInstance().get(Calendar.SECOND)!=endTime){}
+                LoginFragment loginFragment = new LoginFragment();
+                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+                android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+                transaction.replace(R.id.fragment_container, loginFragment);
+                transaction.commit();
+                client.user().logout().execute();
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Toast.makeText(getApplicationContext(), "Unable to make connecton.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public Map<Item, Integer> getCart(){
@@ -91,7 +116,10 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
             public void onSuccess(User u) {
                 CharSequence text = "Welcome back," + u.getUsername() + ".";
                 Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-
+                try{client.push().initialize(getApplication());}
+                catch(Exception e){
+                    Log.d("Err", e.getMessage());
+                }
                 if (u.get("UserType").equals("store")) {
                     Query myQuery = client.query();
                     myQuery.equals("name", u.get("store_name"));

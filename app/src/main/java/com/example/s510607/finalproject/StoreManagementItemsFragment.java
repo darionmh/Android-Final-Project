@@ -72,9 +72,9 @@ public class StoreManagementItemsFragment extends Fragment {
         if(items.isEmpty()){
             items.add(new Item("There are no items.", "", 0));
         }
-        ItemArrayAdapter CategoriesAA = new ItemArrayAdapter(getContext(), R.layout.item_list_item, R.id.itemNameTV,items);
+        ItemArrayAdapter itemsAA = new ItemArrayAdapter(getContext(), R.layout.item_list_item, R.id.itemNameTV,items);
 
-        categoriesLV.setAdapter(CategoriesAA);
+        categoriesLV.setAdapter(itemsAA);
 
         categoriesLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override

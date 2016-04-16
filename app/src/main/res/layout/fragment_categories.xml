@@ -13,8 +13,18 @@
         android:text="Categories"
         android:id="@+id/categoriesTV"
         android:layout_gravity="center_horizontal|top"
-        android:layout_alignParentLeft="false"
         android:layout_alignParentTop="true"
+        android:foregroundGravity="center_horizontal"
+        android:gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Choose a Category!"
+        android:id="@+id/chooseTV"
+        android:layout_gravity="center_horizontal"
+        android:layout_below="@+id/categoriesTV"
         android:foregroundGravity="center_horizontal"
         android:gravity="center_horizontal" />
 
@@ -22,6 +32,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/categoriesLV"
-        android:layout_below="@+id/categoriesTV"
+        android:layout_below="@+id/chooseTV"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>

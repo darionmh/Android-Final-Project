@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +29,9 @@ public class CategoriesFragment extends Fragment {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_categories, container, false);
         ListView categoriesLV = (ListView) view.findViewById(R.id.categoriesLV);
+        TextView categoriesTV = (TextView) view.findViewById(R.id.categoriesTV);
+
+        categoriesTV.setText(store.getName());
         ArrayAdapter<String> CategoriesAA = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, store.getAllCategories());
         categoriesLV.setAdapter(CategoriesAA);
         categoriesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
