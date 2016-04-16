@@ -1,8 +1,9 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="layout.CategoriesFragment">
+    tools:context="layout.CategoriesFragment"
+    android:orientation="vertical">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -13,25 +14,35 @@
         android:text="Categories"
         android:id="@+id/categoriesTV"
         android:layout_gravity="center_horizontal|top"
+        android:layout_alignParentLeft="false"
         android:layout_alignParentTop="true"
         android:foregroundGravity="center_horizontal"
         android:gravity="center_horizontal" />
 
-    <TextView
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Choose a Category!"
-        android:id="@+id/chooseTV"
-        android:layout_gravity="center_horizontal"
-        android:layout_below="@+id/categoriesTV"
-        android:foregroundGravity="center_horizontal"
-        android:gravity="center_horizontal" />
+        android:layout_below="@+id/categoriesTV">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Leave Category"
+            android:id="@+id/leaveCategoryCustBTN"
+            android:layout_weight="1" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cart"
+            android:id="@+id/button2"
+            android:layout_weight="1" />
+    </LinearLayout>
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/categoriesLV"
-        android:layout_below="@+id/chooseTV"
         android:layout_centerHorizontal="true" />
-</RelativeLayout>
+</LinearLayout>

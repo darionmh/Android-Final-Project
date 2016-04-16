@@ -30,10 +30,11 @@ import java.util.Map;
 import layout.SplashsScreenFragment;
 
 public class MainActivity extends AppCompatActivity implements CartFragment.CartListener, StoreManagementCategoriesFragment.StoreManagementCategoriesListener,
-        StoreManagementItemsFragment.StoreManagementItemsListener{
+        StoreManagementItemsFragment.StoreManagementItemsListener,ItemsFragment.ItemsReceiver,PurchaseFragment.purchaseCommunicator{
 
     HashMap<Item, Integer> cart;
     ArrayList<String> stores;
+    ArrayList<Purchase> purchases;
     Client client;
     Store currentStore;
     boolean unsavedChanges;
@@ -376,6 +377,19 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
         transaction.commit();
     }
 
+//    public void leaveCategoryCustomer(View v)
+//    {
+//        CategoriesFragment categoriesFragment = new CategoriesFragment();
+//        Bundle bundle = new Bundle();
+//        bundle.putString("store_name", currentStore.getName());
+//        categoriesFragment.setArguments(bundle);
+//        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+//        android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        transaction.replace(R.id.fragment_container, categoriesFragment);
+//        transaction.commit();
+//    }
+
+
     public void addCategory(String name) {
         Category cat = new Category(name);
         if(currentStore.addCategory(cat)){
@@ -422,7 +436,7 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
-
+/
     public void openAddItemDialog(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         LayoutInflater li = LayoutInflater.from(this);
@@ -482,5 +496,16 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
     @Override
     public void deleteItem(Item item, String category) {
         unsavedChanges = true;
+    }
+
+    @Override
+    public void ItemSend(Item item, int q) {
+        cart.put(item, q);
+    }
+
+    @Override
+    public void purchaseSender(Purchase p) {
+        purchases.add(p);
+
     }
 }

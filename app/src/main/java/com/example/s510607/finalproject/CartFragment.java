@@ -8,10 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -20,6 +23,9 @@ import java.util.Map;
 public class CartFragment extends Fragment {
 
     Map<Item, Integer> cart;
+    ListView cartLV;
+    CartArrayAdapter cartAdapter;
+    double total = 0.0;
 
     CartListener cartListener;
     public interface CartListener{
@@ -35,6 +41,26 @@ public class CartFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_cart, container, false);
+        cartLV = (ListView) view.findViewById(R.id.cartLV);
+        TextView totalTV = (TextView) view.findViewById(R.id.cartTotalCostTV);
+        cart = cartListener.getCart();
+        Set keys = cart.keySet();
+        ArrayList<Item> cartList = new ArrayList<>();
+        cartList.addAll(keys);
+        ArrayList<Integer> quantities = new ArrayList<>();
+        for(int i = 0; i < cartList.size(); i++)
+        {
+            quantities.add(cart.get(cartList.get(i)));
+        }
+        cartAdapter = new CartArrayAdapter(getActivity(),R.layout.cart_list_item,R.layout.fragment_cart,cartList,quantities);
+        cartLV.setAdapter(cartAdapter);
+        for(int i = 0; i < cartList.size();i++)
+        {
+            total += cartList.get(i).getPrice() * quantities.get(i);
+        }
+        totalTV.setText(String.format("$%.2f", total));
+
+
 
         return view;
     }
@@ -46,9 +72,9 @@ public class CartFragment extends Fragment {
 
 }
 
-class cartArrayAdapter extends ArrayAdapter<Item> {
+class CartArrayAdapter extends ArrayAdapter<Item> {
     List<Integer> itemQuantities;
-    public cartArrayAdapter(Context context, int resource, int textViewResourceId, List<Item> objects, List<Integer> itemQuantities) {
+    public CartArrayAdapter(Context context, int resource, int textViewResourceId, List<Item> objects, List<Integer> itemQuantities) {
         super(context, resource, textViewResourceId, objects);
         this.itemQuantities = itemQuantities;
     }
