@@ -92,10 +92,10 @@ class CartArrayAdapter extends ArrayAdapter<Item> {
         Item currentItem = getItem(position);
 
         name.setText(currentItem.getName());
-        quantity.setText(itemQuantities.get(position));
+        quantity.setText(itemQuantities.get(position)+"");
         price.setText(String.format("$%.2f", currentItem.getPrice()));
 
-        Log.d("Test", String.format("%s\n%d\n%0.2f\n\n", currentItem.getName(), itemQuantities.get(position), currentItem.getPrice()));
+        Log.d("Test", String.format("%s\n%d\n%.2f\n\n", currentItem.getName(), itemQuantities.get(position), currentItem.getPrice()));
         return view;
     }
 

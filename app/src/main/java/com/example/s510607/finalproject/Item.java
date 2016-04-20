@@ -7,6 +7,9 @@ import com.google.api.client.util.Key;
  * Created by darionhiggins on 3/4/16.
  */
 public class Item extends GenericJson{
+    @Key("_id")
+    private String id;
+
     @Key
     private String name;
 
@@ -50,6 +53,14 @@ public class Item extends GenericJson{
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

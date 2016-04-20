@@ -3,25 +3,26 @@ package com.example.s510607.finalproject;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.transition.Fade;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.api.client.json.GenericJson;
 import com.kinvey.android.AsyncAppData;
 import com.kinvey.android.Client;
+import com.kinvey.android.callback.KinveyDeleteCallback;
 import com.kinvey.android.callback.KinveyListCallback;
 import com.kinvey.android.callback.KinveyPingCallback;
 import com.kinvey.android.callback.KinveyUserCallback;
 import com.kinvey.java.Query;
 import com.kinvey.java.User;
 import com.kinvey.java.core.KinveyClientCallback;
+import com.kinvey.java.model.KinveyDeleteResponse;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,7 +32,8 @@ import java.util.Map;
 import layout.SplashsScreenFragment;
 
 public class MainActivity extends AppCompatActivity implements CartFragment.CartListener, StoreManagementCategoriesFragment.StoreManagementCategoriesListener,
-        StoreManagementItemsFragment.StoreManagementItemsListener,ItemsFragment.ItemsReceiver,PurchaseFragment.purchaseCommunicator, StoresFragment.StoreFragmentListener{
+        StoreManagementItemsFragment.StoreManagementItemsListener,ItemsFragment.ItemsReceiver,PurchaseFragment.purchaseCommunicator,
+        StoresFragment.StoreFragmentListener, ViewOrdersFragment.ViewOrdersListener{
 
     HashMap<Item, Integer> cart;
     ArrayList<String> stores;
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-        transaction.add(R.id.fragment_container, splashScreen);
+        transaction.replace(R.id.fragment_container, splashScreen);
         transaction.commit();
 
         client = new Client.Builder(this.getApplicationContext()).build();
@@ -65,12 +67,7 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
                 int currentSeconds = Calendar.getInstance().get(Calendar.SECOND);
                 int endTime = (currentSeconds+3)%60;
                 while(Calendar.getInstance().get(Calendar.SECOND)!=endTime){}
-                LoginFragment loginFragment = new LoginFragment();
-                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-                android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-                transaction.replace(R.id.fragment_container, loginFragment);
-                transaction.commit();
+                showLogin(null);
                 client.user().logout().execute();
             }
 
@@ -81,17 +78,40 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
         });
     }
 
+    public void showLogin(View v){
+        new Handler().post(new Runnable() {
+            public void run() {
+                LoginFragment loginFragment = new LoginFragment();
+                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+                android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+                transaction.replace(R.id.fragment_container, loginFragment);
+                transaction.commitAllowingStateLoss();
+                //transaction.commit();
+            }
+        });
+    }
+
     @Override
     public Map<Item, Integer> getCart(){
         return cart;
     }
 
     public void cartCancelPress(View view){
-
+        backToCategories(null);
     }
 
     public void cartCheckOutPress(View view){
-
+        PurchaseFragment purchaseFragment = new PurchaseFragment();
+        double totalCost = 0;
+        for(Item i:cart.keySet()){
+            totalCost += i.getPrice()*cart.get(i);
+        }
+        purchaseFragment.setTotalCost(totalCost);
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.fragment_container, purchaseFragment);
+        transaction.commit();
     }
 
     public void login(View view){
@@ -108,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
                 if (client.user().isUserLoggedIn()) {
                     client.user().logout().execute();
                     login(null);
-                }else{
+                } else {
                     CharSequence text = "Wrong username or password, or somebody's already logged in.";
                     Log.d("TAGGER", t.toString());
                     Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
@@ -118,9 +138,11 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
             @Override
             public void onSuccess(User u) {
                 CharSequence text = "Welcome back," + u.getUsername() + ".";
+                client.enableDebugLogging();
                 Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-                try{client.push().initialize(getApplication());}
-                catch(Exception e){
+                try {
+                    client.push().initialize(getApplication());
+                } catch (Exception e) {
                     Log.d("Err", e.getMessage());
                 }
                 if (u.get("UserType").equals("store")) {
@@ -441,7 +463,6 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
         categoriesFragment.setStore(currentStore);
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.addToBackStack("stores");
         transaction.replace(R.id.fragment_container,categoriesFragment );
         transaction.commit();
     }
@@ -561,13 +582,114 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
     }
 
     @Override
-    public void purchaseSender(Purchase p) {
-        purchases.add(p);
+    public void purchaseSender(CreditCard creditCard) {
+        String order = "";
+        for(Item i:cart.keySet()){
+            order += String.format("%s: %d\n", i.getName(), cart.get(i));
+        }
 
+        //Purchase p = new Purchase(currentStore.getName(), (String) client.user().get("first_name"), creditCard, creditCard.cardNumber == 0);
+        GenericJson g = new GenericJson();
+        g.put("store_name", currentStore.getName());
+        g.put("customer_name", (String)client.user().get("first_name"));
+        g.put("card", creditCard);
+        g.put("order", order);
+        AsyncAppData<GenericJson> purchaseData = client.appData("orders", GenericJson.class);
+        purchaseData.save(g, new KinveyClientCallback<GenericJson>() {
+            @Override
+            public void onFailure(Throwable e) {
+                Log.d("Oops", e.toString());
+                Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onSuccess(GenericJson r) {
+                Log.d("Oops", "yay");
+                Toast.makeText(getApplicationContext(), "Order submitted", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        reloadStore();
     }
 
     @Override
     public void updateStore(Store store) {
         currentStore = store;
+    }
+
+    @Override
+    public void getOrders() {
+        Query q = new Query();
+        q.equals("store_name", currentStore.getName());
+        final boolean[] finish = new boolean[1];
+        finish[0] = false;
+        AsyncAppData<GenericJson> orderData = client.appData("orders", GenericJson.class);
+        orderData.get(q, new KinveyListCallback<GenericJson>() {
+            @Override
+            public void onSuccess(GenericJson[] genericJsons) {
+                Toast.makeText(getApplicationContext(), "Found "+genericJsons.length+" orders!", Toast.LENGTH_SHORT).show();
+                ArrayList<String> names = new ArrayList<String>();
+                ArrayList<String> orders = new ArrayList<String>();
+                for(GenericJson g:genericJsons){
+                    String customerName = (String)g.get("customer_name");
+                    String order = (String)g.get("order");
+                    names.add(customerName);
+                    orders.add(order);
+                }
+                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+                ViewOrdersFragment fragment = (ViewOrdersFragment) fragmentManager.findFragmentById(R.id.fragment_container);
+                fragment.setOrders(orders);
+                fragment.setNames(names);
+                fragment.buildLV();
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Toast.makeText(getApplicationContext(), "Could not get orders", Toast.LENGTH_SHORT).show();
+                Log.d("Oops", throwable.toString());
+            }
+        });
+    }
+
+    @Override
+    public void deleteOrder(String customerName, String order) {
+        Query q = new Query();
+        Log.d("oops", customerName+" "+order);
+        q.equals("customer_name", customerName);
+        q.equals("order", order);
+        AsyncAppData<GenericJson> orderData = client.appData("orders", GenericJson.class);
+        orderData.delete(q, new KinveyDeleteCallback() {
+            @Override
+            public void onSuccess(KinveyDeleteResponse kinveyDeleteResponse) {
+                Log.d("oops", "Deleted "+kinveyDeleteResponse.getCount());
+                Toast.makeText(MainActivity.this, "Order deleted!", Toast.LENGTH_SHORT).show();
+                getOrders();
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Toast.makeText(getApplicationContext(), "Order couldn't be deleted", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void showOrders(View v){
+        ViewOrdersFragment viewOrdersFragment = new ViewOrdersFragment();
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.fragment_container,viewOrdersFragment);
+        transaction.commit();
+        getOrders();
+    }
+
+    public void storeBackToCategories(View v){
+        StoreManagementCategoriesFragment storeManagementCategoriesFragment = new StoreManagementCategoriesFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("store_name", currentStore.getName());
+        storeManagementCategoriesFragment.setArguments(bundle);
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.fragment_container, storeManagementCategoriesFragment);
+        transaction.commit();
     }
 }

@@ -60,6 +60,7 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:ems="10"
+            android:maxLength="16"
             android:id="@+id/cardNumberET"
             android:layout_weight="1" />
     </LinearLayout>
@@ -83,6 +84,7 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:ems="10"
+            android:maxLength="2"
             android:id="@+id/expDateMonthET"
             android:layout_weight="1"
             android:hint="MM" />
@@ -99,6 +101,7 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:ems="10"
+            android:maxLength="4"
             android:id="@+id/expDateYearET"
             android:layout_weight="1"
             android:hint="YYYY" />
@@ -123,6 +126,7 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:ems="10"
+            android:maxLength="3"
             android:id="@+id/securityCodeET"
             android:layout_weight="1"
             android:hint="XXX" />
@@ -140,16 +144,21 @@
             android:layout_height="wrap_content"
             android:text="Cash"
             android:id="@+id/cashBTN"
-            android:layout_weight="1"
-            android:onClick="cashPressed" />
+            android:layout_weight="1"/>
 
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Card"
             android:id="@+id/cardBTN"
-            android:layout_weight="1"
-            android:onClick="cardPressed" />
+            android:layout_weight="1"/>
     </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:id="@+id/cancelBTN"
+        android:onClick="cartCancelPress"/>
 
 </LinearLayout>

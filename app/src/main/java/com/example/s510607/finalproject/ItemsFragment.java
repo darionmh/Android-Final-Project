@@ -1,15 +1,14 @@
 package com.example.s510607.finalproject;
 
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -54,14 +53,18 @@ public class ItemsFragment extends Fragment {
         }
         itemAdapter = new ItemsArrayAdapter(getActivity(),R.layout.item_list_item,R.id.itemNameTV,items);
         itemsLV.setAdapter(itemAdapter);
-        itemsLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        itemsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View clickView, final int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View clickView, final int position, long id) {
 
                 final Dialog d = new Dialog(getActivity());
                 d.setContentView(R.layout.quantity_dialog_layout);
                 d.setTitle("Select Quantity");
                 final EditText dialogET = (EditText) d.findViewById(R.id.quantityDialogET);
+                if(dialogET.requestFocus()) {
+                    InputMethodManager keyboard = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    keyboard.showSoftInput(dialogET, 0);
+                }
                 Button okButton = (Button) d.findViewById(R.id.dialogOKBTN);
                 Button cancel = (Button) d.findViewById(R.id.dialogCancelBTN);
                 okButton.setOnClickListener(new AdapterView.OnClickListener() {
@@ -83,22 +86,7 @@ public class ItemsFragment extends Fragment {
                     }
                 });
                 d.show();
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                builder.setView(R.layout.quantity_dialog_layout).setMessage("")
-//                        .setTitle("Select Quantity").setPositiveButton("Done", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        quantity = Integer.parseInt(((EditText) clickView.findViewById(R.id.quantityDialogET)).getText().toString());
-//                    }
-//                });
-//                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        quantity = 0;
-//                    }
-//                });
-//                AlertDialog myDialog = builder.create();
-//                myDialog.show();
                 quantity = 0;
-                return false;
             }
         });
 

@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -43,6 +44,9 @@ public class StoresFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_stores, container, false);
 
+        InputMethodManager keyboard = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
         ArrayList<String> storeNames = new ArrayList<>();
         for(Store s:stores){
             storeNames.add(s.getName());
@@ -59,7 +63,6 @@ public class StoresFragment extends Fragment {
                 categoriesFragment.setStore(stores[position]);
                 storeFragmentListener.updateStore(stores[position]);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.addToBackStack("stores");
                 transaction.replace(R.id.fragment_container,categoriesFragment );
                 transaction.commit();
             }

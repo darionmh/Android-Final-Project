@@ -10,6 +10,8 @@ import java.util.HashMap;
  * Created by S510607 on 3/28/2016.
  */
 public class Category extends GenericJson {
+    @Key("_id")
+    private String id;
 
     @Key
     private String name;
@@ -84,5 +86,13 @@ public class Category extends GenericJson {
         item.setName(newName);
         items.put(newName, item);
         return 1;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

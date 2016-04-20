@@ -78,11 +78,20 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:layout_above="@+id/cancelBTN"
             android:textAllCaps="false"
             android:text="Register"
             android:onClick="register"
             android:id="@+id/registerButton"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:textAllCaps="false"
+            android:text="Cancel"
+            android:onClick="showLogin"
+            android:id="@+id/cancelBTN"/>
 
     </RelativeLayout>
 

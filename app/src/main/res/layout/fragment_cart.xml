@@ -23,7 +23,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/cartTitleTV"
             android:layout_above="@+id/cartTotalCostTV"
-            android:background="#ff00ff"
             android:layout_marginBottom="5dp"
             android:choiceMode="none"
             android:id="@+id/cartLV"/>
