@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
 
             @Override
             public void onSuccess(User u) {
-                CharSequence text = "Welcome back," + u.getUsername() + ".";
+                CharSequence text = "Welcome back, " + u.getUsername() + ".";
                 client.enableDebugLogging();
                 Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
                 try {
