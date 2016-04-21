@@ -14,7 +14,7 @@
             android:layout_alignParentTop="true"
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.Large"
-            android:text="Title"
+            android:text="Shoppy"
             android:id="@+id/loginTitle"/>
 
         <EditText

@@ -582,11 +582,12 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
     }
 
     @Override
-    public void purchaseSender(CreditCard creditCard) {
+    public void purchaseSender(CreditCard creditCard, String address) {
         String order = "";
         for(Item i:cart.keySet()){
             order += String.format("%s: %d\n", i.getName(), cart.get(i));
         }
+        order = address + "\n" + order;
 
         //Purchase p = new Purchase(currentStore.getName(), (String) client.user().get("first_name"), creditCard, creditCard.cardNumber == 0);
         GenericJson g = new GenericJson();
