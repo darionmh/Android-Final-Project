@@ -609,7 +609,7 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
                 Toast.makeText(getApplicationContext(), "Order submitted", Toast.LENGTH_SHORT).show();
             }
         });
-
+        cart.clear();
         reloadStore();
     }
 

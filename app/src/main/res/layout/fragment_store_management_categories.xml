@@ -54,6 +54,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_margin="16dp"
+            android:src="@drawable/ic_add_white_24dp"
             android:id="@+id/fab"
             android:clickable="true"
             android:onClick="openAddCategoryDialog"/>

@@ -69,7 +69,7 @@ public class PurchaseFragment extends Fragment {
         zipET = (EditText) view.findViewById(R.id.zipET);
         saveAddressCB = (CheckBox) view.findViewById(R.id.saveCB);
         totalCostTV = (TextView) view.findViewById(R.id.amtDueNumberTV);
-        totalCostTV.setText(totalCost+"");
+        totalCostTV.setText(String.format("$ %.2f", totalCost));
 
         Button cashButton = (Button) view.findViewById(R.id.cashBTN);
         cashButton.setOnClickListener(new View.OnClickListener() {
