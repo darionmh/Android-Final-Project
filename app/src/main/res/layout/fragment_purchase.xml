@@ -248,6 +248,6 @@
         android:layout_height="wrap_content"
         android:text="Cancel"
         android:id="@+id/cancelBTN"
-        android:onClick="cartCancelPress"/>
+        android:onClick="showCategories"/>
 
 </LinearLayout>

@@ -22,27 +22,77 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/cartTitleTV"
-            android:layout_above="@+id/cartTotalCostTV"
+            android:layout_above="@+id/cartSubtotalLayout"
             android:layout_marginBottom="5dp"
             android:choiceMode="none"
             android:id="@+id/cartLV"/>
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/cartTaxCostLayout"
+            android:id="@+id/cartSubtotalLayout">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@android:style/TextAppearance.Medium"
+                android:text="Subtotal: "
+                android:id="@+id/cartSubtotalLabelTV"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/cartTotalCostLabelTV"
+                android:layout_toRightOf="@+id/cartTotalCostLabelTV"
+                android:textAppearance="@android:style/TextAppearance.Medium"
+                android:text="$ 0.00"
+                android:id="@+id/cartSubtotalTV"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/cartTotalCostLayout"
+            android:id="@+id/cartTaxCostLayout">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@android:style/TextAppearance.Medium"
+                android:text="Tax (8.475%): "
+                android:id="@+id/cartTaxCostLabelTV"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/cartTotalCostLabelTV"
+                android:layout_toRightOf="@+id/cartTotalCostLabelTV"
+                android:textAppearance="@android:style/TextAppearance.Medium"
+                android:text="$ 0.00"
+                android:id="@+id/cartTaxCostTV"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/cartButtonsLayout"
-            android:textAppearance="@android:style/TextAppearance.Medium"
-            android:text="Total Cost: "
-            android:id="@+id/cartTotalCostLabelTV"/>
+            android:id="@+id/cartTotalCostLayout">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@android:style/TextAppearance.Medium"
+                android:text="Total Cost: "
+                android:id="@+id/cartTotalCostLabelTV"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/cartTotalCostLabelTV"
-            android:layout_toRightOf="@+id/cartTotalCostLabelTV"
-            android:textAppearance="@android:style/TextAppearance.Medium"
-            android:text="$ 0.00"
-            android:id="@+id/cartTotalCostTV"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/cartTotalCostLabelTV"
+                android:layout_toRightOf="@+id/cartTotalCostLabelTV"
+                android:textAppearance="@android:style/TextAppearance.Medium"
+                android:text="$ 0.00"
+                android:id="@+id/cartTotalCostTV"/>
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -65,7 +115,7 @@
                 android:layout_weight="1"
                 android:text="Cancel"
                 android:textAllCaps="false"
-                android:onClick="cartCancelPress"/>
+                android:onClick="showCategories"/>
         </LinearLayout>
 
     </RelativeLayout>

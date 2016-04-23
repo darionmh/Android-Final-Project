@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +77,7 @@ public class ItemsFragment extends Fragment {
                         quantity = Integer.parseInt(dialogET.getText().toString());
                         iReceiver.ItemSend(items.get(position), quantity);
                         d.dismiss();
+                        Toast.makeText(getContext(), "Item added to cart!", Toast.LENGTH_SHORT).show();
                     }
                 });
 

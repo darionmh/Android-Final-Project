@@ -41,7 +41,8 @@ public class CartFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_cart, container, false);
         ListView cartLV = (ListView) view.findViewById(R.id.cartLV);
-
+        TextView subtotalTV = (TextView) view.findViewById(R.id.cartSubtotalTV);
+        TextView taxTV = (TextView) view.findViewById(R.id.cartTaxCostTV);
         TextView totalTV = (TextView) view.findViewById(R.id.cartTotalCostTV);
         cart = cartListener.getCart();
 
@@ -62,7 +63,9 @@ public class CartFragment extends Fragment {
         {
             total += cartList.get(i).getPrice() * quantities.get(i);
         }
-        totalTV.setText(String.format("$%.2f", total));
+        subtotalTV.setText(String.format("$%.2f", total));
+        taxTV.setText(String.format("$%.2f", total*0.8475));
+        totalTV.setText(String.format("$%.2f", total*1.8475));
 
         return view;
     }
