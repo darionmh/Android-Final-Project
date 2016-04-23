@@ -29,10 +29,10 @@ public class StoreManagementItemsFragment extends Fragment {
     }
 
     public interface StoreManagementItemsListener{
-        public ArrayList<Item> getItems(String category);
-        public void updateItem(Item item, String category);
-        public void renameItem(String oldName, String newName, String category);
-        public void deleteItem(Item item, String category);
+        ArrayList<Item> getItems(String category);
+        void updateItem(Item item, String category);
+        void renameItem(String oldName, String newName, String category);
+        void deleteItem(Item item, String category);
     }
 
     StoreManagementItemsListener storeManagementItemsListener;
@@ -86,27 +86,38 @@ public class StoreManagementItemsFragment extends Fragment {
         });
     }
 
+    //Method called from mainActivity to update the itemList and rebuild the list view
     public void updateListView(ArrayList<Item> list) {
         items = list;
         buildListView();
     }
 
+    //Method called from the ItemModificationDialog to update the item with new information
     public void updateItem(Item item, String name, double price, String description){
+
+        //If the name is being changed, the item is renamed first
         if(!name.equals(item.getName())){
             storeManagementItemsListener.renameItem(item.getName(), name, category);
         }
 
+        //Value are set
         item.setName(name);
         item.setPrice(price);
         item.setDescription(description);
 
+        //Item is passed to mainactivity to update it
         storeManagementItemsListener.updateItem(item, category);
+
+        //Gets an updated itemlist and rebuilds
         items = storeManagementItemsListener.getItems(category);
         buildListView();
     }
 
+    //Method is called from the ItemModificationDialog to delete the item
     public void deleteItem(Item item){
         storeManagementItemsListener.deleteItem(item, category);
+
+        //Gets an update item list and rebuilds
         items = storeManagementItemsListener.getItems(category);
         buildListView();
     }

@@ -30,6 +30,9 @@ public class RegisterFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_register, container, false);
 
         RadioGroup userTypeGroup = (RadioGroup) view.findViewById(R.id.userTypeRBG);
+
+        //If customer type is selected, first and last name fields are shown
+        //If store type is selected, store name field is shown
         userTypeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {

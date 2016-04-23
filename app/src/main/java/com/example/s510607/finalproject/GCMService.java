@@ -6,6 +6,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.kinvey.android.push.KinveyGCMService;
 public class GCMService extends KinveyGCMService {
+    //Generic push notification service I copied from Kinvey
     @Override
     public void onMessage(String message) {
         displayNotification(message);

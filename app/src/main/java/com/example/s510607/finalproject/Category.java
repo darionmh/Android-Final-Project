@@ -6,9 +6,6 @@ import com.google.api.client.util.Key;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by S510607 on 3/28/2016.
- */
 public class Category extends GenericJson {
     @Key("_id")
     private String id;
@@ -34,6 +31,7 @@ public class Category extends GenericJson {
         this.name = name;
     }
 
+    //Adds an item to the list if it doesn't already have one by the same name
     public boolean addItem(Item item){
         if(items.containsKey(item.getName())){
             return false;
@@ -42,8 +40,10 @@ public class Category extends GenericJson {
         return true;
     }
 
+    //Removes an item if it contains the item
     public boolean removeItem(Item item){
         if(!items.containsKey(item.getName())){
+            //If it doesn't have an item with that name, but one has the same contents, that one is deleted
             if(items.containsValue(item)){
                 ArrayList<Item> values = new ArrayList(items.values());
                 ArrayList<String> keys = new ArrayList(items.keySet());
@@ -59,6 +59,7 @@ public class Category extends GenericJson {
         return true;
     }
 
+    //Updates an item if it has one with that name
     public boolean updateItem(Item item){
         if(!items.containsKey(item.getName())){
             return false;
@@ -73,9 +74,11 @@ public class Category extends GenericJson {
     }
 
     public ArrayList<Item> getItems(){
-        return new ArrayList<Item>(items.values());
+        return new ArrayList<>(items.values());
     }
 
+    //Attempts to rename the item
+    //Returns 1 if successful, 0 if the original name didn't exist, and -1 if it already has one with the new name
     public int renameItem(String oldName, String newName){
         if(!items.containsKey(oldName)){
             return 0;

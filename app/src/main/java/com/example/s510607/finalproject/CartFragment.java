@@ -44,25 +44,32 @@ public class CartFragment extends Fragment {
         TextView subtotalTV = (TextView) view.findViewById(R.id.cartSubtotalTV);
         TextView taxTV = (TextView) view.findViewById(R.id.cartTaxCostTV);
         TextView totalTV = (TextView) view.findViewById(R.id.cartTotalCostTV);
+
+        //Cart is retrieved from the main activity
         cart = cartListener.getCart();
 
+        //All of the items in the cart are added to an arraylist
         Set keys = cart.keySet();
         ArrayList<Item> cartList = new ArrayList<>();
         cartList.addAll(keys);
+
+        //All of the item quantities are added to an arraylist
         ArrayList<Integer> quantities = new ArrayList<>();
-        ArrayList<String> names = new ArrayList<>();
         for(int i = 0; i < cartList.size(); i++)
         {
             quantities.add(cart.get(cartList.get(i)));
-
-            names.add(cartList.get(i).getName());
         }
+
         CartArrayAdapter cartAdapter = new CartArrayAdapter(getContext(),R.layout.cart_list_item,R.id.cartItemNameTV,cartList,quantities);
         cartLV.setAdapter(cartAdapter);
+
+        //Total cost is calculated
         for(int i = 0; i < cartList.size();i++)
         {
             total += cartList.get(i).getPrice() * quantities.get(i);
         }
+
+        //The subtotal, tax, and totals are added to their respective textviews
         subtotalTV.setText(String.format("$%.2f", total));
         taxTV.setText(String.format("$%.2f", total*0.8475));
         totalTV.setText(String.format("$%.2f", total*1.8475));

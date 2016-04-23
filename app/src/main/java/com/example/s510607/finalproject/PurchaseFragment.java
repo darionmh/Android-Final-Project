@@ -20,7 +20,7 @@ public class PurchaseFragment extends Fragment {
 
     interface purchaseCommunicator //Interface to send and receive information from the MainActivity
     {
-        public void purchaseSender(CreditCard creditCard, String address);
+        void purchaseSender(CreditCard creditCard, String address);
     }
 
     purchaseCommunicator purCom;
@@ -72,6 +72,7 @@ public class PurchaseFragment extends Fragment {
         totalCostTV.setText(String.format("$ %.2f", totalCost));
 
         Button cashButton = (Button) view.findViewById(R.id.cashBTN);
+        //If cash button is pressed, cashPressed is called
         cashButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,6 +80,7 @@ public class PurchaseFragment extends Fragment {
             }
         });
         Button cardButton = (Button) view.findViewById(R.id.cardBTN);
+        //If card button is pressed, cardPressed is called
         cardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,6 +88,7 @@ public class PurchaseFragment extends Fragment {
             }
         });
 
+        //Shared preferences are loaded to get the saved address, if there is one
         SharedPreferences preferences = getContext().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
         streetET.setText(preferences.getString("street", ""));
         cityET.setText(preferences.getString("city",""));
@@ -95,13 +98,18 @@ public class PurchaseFragment extends Fragment {
 
     }
 
+    //Called when card is pressed
     public void cardPressed()
     {
+        //Valididates all of the EditTexts
+        //If one is invalid, it is added to the error message
         String errorMessage = "";
+
         cardNumber = cardNumberET.getText().toString();
         if(cardNumber.length()<16){
             errorMessage += "Invalid card number\n";
         }
+
         if(expMonthET.getText().toString().equals("")){
             errorMessage += "Invalid exp month\n";
         }else {
@@ -110,6 +118,7 @@ public class PurchaseFragment extends Fragment {
                 errorMessage += "Invalid exp month\n";
             }
         }
+
         if(expYearET.getText().toString().equals("")){
             errorMessage += "Invalid exp year\n";
         }else {
@@ -118,6 +127,7 @@ public class PurchaseFragment extends Fragment {
                 errorMessage += "Invalid exp year\n";
             }
         }
+
         if(securityCodeET.getText().toString().equals("")){
             errorMessage += "Invalid security code\n";
         }else {
@@ -129,11 +139,14 @@ public class PurchaseFragment extends Fragment {
 
         String address = getAddress();
         if(errorMessage.equals("") && !address.equals("")){
+            //If there are no errors, the information is sent to main activity
             purCom.purchaseSender(new CreditCard(cardNumber, expMonth, expYear, securityCode), address);
         }else{
+            //If the address is equal to "", there was an error with it and it is added to the error message
             if(address.equals("")){
                 errorMessage += "Invalid address";
             }
+            //Since there was an error, the message is shown in an alertdialog
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Invalid input")
                     .setMessage(errorMessage)
@@ -143,10 +156,13 @@ public class PurchaseFragment extends Fragment {
         }
     }
 
+    //Called when cash is pressed
     public void cashPressed()
     {
+        //Only validates the address fields
         String address = getAddress();
         if(address.equals("")){
+            //If address is invalid, an alert is shown
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Invalid input")
                     .setMessage("Invalid address")
@@ -154,23 +170,29 @@ public class PurchaseFragment extends Fragment {
                     .create()
                     .show();
         }else {
+            //Otherwise a blank card is sent with the address to main activity
             purCom.purchaseSender(new CreditCard(), address);
         }
     }
 
+    //Called when either cash or card is pressed
     public String getAddress(){
+        //Validates the address fields
         street = streetET.getText().toString();
         city = cityET.getText().toString();
         state = stateET.getText().toString();
         zip = zipET.getText().toString();
 
+        //If any are blank, a blank string is sent to signifiy an error
         if(street.equals("") || city.equals("") || state.equals("") || zip.equals("")){
             return "";
         }
 
+
         SharedPreferences preferences = getContext().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         if(saveAddressCB.isChecked()){
+            //If save address is checked, the address is saved to sharedpreferences
             editor.putString("street",street);
             editor.putString("city",city);
             editor.putString("state",state);

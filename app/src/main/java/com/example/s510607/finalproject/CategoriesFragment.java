@@ -33,11 +33,12 @@ public class CategoriesFragment extends Fragment {
         TextView categoriesTV = (TextView) view.findViewById(R.id.categoriesTV);
 
         categoriesTV.setText(store.getName());
-        ArrayAdapter<String> CategoriesAA = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, store.getAllCategories());
+        ArrayAdapter<String> CategoriesAA = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, store.getAllCategories());
         categoriesLV.setAdapter(CategoriesAA);
         categoriesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //When a category is pressed, it is sent to the ItemsFragment to have its items displayed
                 String categoryName = store.getAllCategories().get(position);
                 ItemsFragment itemFragment = new ItemsFragment();
                 itemFragment.setCategory(store.getCategory(categoryName));

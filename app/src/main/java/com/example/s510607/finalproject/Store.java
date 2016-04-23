@@ -6,9 +6,6 @@ import com.google.api.client.util.Key;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by S510607 on 3/28/2016.
- */
 public class Store extends GenericJson {
     @Key("_id")
     private String id;
@@ -30,6 +27,7 @@ public class Store extends GenericJson {
         return name;
     }
 
+    //Adds a new category to the list if one with the same name doesn't exist
     public boolean addCategory(Category category){
         if(categories.containsKey(category.getName())){
             return false;
@@ -38,6 +36,7 @@ public class Store extends GenericJson {
         return true;
     }
 
+    //Removes the category from the list if it exists
     public boolean removeCategory(Category category){
         if(!categories.containsKey(category.getName())){
             return false;
@@ -50,6 +49,8 @@ public class Store extends GenericJson {
         return categories.get(name);
     }
 
+    //Attempts to rename the category
+    //Returns 1 if successful, 0 if the original name didn't exist, and -1 if it already has one with the new name
     public int renameCategory(String oldName, String newName){
         if(!categories.containsKey(oldName)){
             return 0;
@@ -62,6 +63,7 @@ public class Store extends GenericJson {
         return 1;
     }
 
+    //Returns a list of all of the category names
     public ArrayList<String> getAllCategories(){
         ArrayList<String> categoryNames = new ArrayList();
         categoryNames.addAll(categories.keySet());

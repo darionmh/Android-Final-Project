@@ -27,7 +27,7 @@ public class StoresFragment extends Fragment {
 
 
     public interface StoreFragmentListener{
-        public void updateStore(Store store);
+        void updateStore(Store store);
     }
 
     StoreFragmentListener storeFragmentListener;
@@ -44,21 +44,24 @@ public class StoresFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_stores, container, false);
 
+        //Hides the keyboard
         InputMethodManager keyboard = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
+        //Creates an arraylist of all of the store names for the listview
         ArrayList<String> storeNames = new ArrayList<>();
         for(Store s:stores){
             storeNames.add(s.getName());
         }
 
         ListView storesLV = (ListView) view.findViewById(R.id.storesLV);
-        ArrayAdapter<String> storesAA = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, storeNames);
+        ArrayAdapter<String> storesAA = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, storeNames);
         storesLV.setAdapter(storesAA);
 
         storesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //On item click, the store is passed to the CategoriesFragment, which is then shown
                 CategoriesFragment categoriesFragment = new CategoriesFragment();
                 categoriesFragment.setStore(stores[position]);
                 storeFragmentListener.updateStore(stores[position]);

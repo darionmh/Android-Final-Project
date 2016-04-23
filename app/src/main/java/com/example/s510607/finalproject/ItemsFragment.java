@@ -30,10 +30,9 @@ public class ItemsFragment extends Fragment {
     ItemsArrayAdapter itemAdapter;
     int quantity = 0;
 
-    Item itemToSend;
 
     public interface ItemsReceiver{
-        public void ItemSend(Item item,int q);
+        void ItemSend(Item item,int q);
     }
 
     ItemsReceiver iReceiver;
@@ -42,38 +41,49 @@ public class ItemsFragment extends Fragment {
 
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_items, container, false);
         itemsLV = (ListView) view.findViewById(R.id.itemsLVCust);
+
+        //Gets all of the items from the category
         items = category.getItems();
         if(items.isEmpty()){
+            //If there are none, a default item is sent to show there are none
             items.add(new Item("There are no items.", "", 0));
         }
+
         itemAdapter = new ItemsArrayAdapter(getActivity(),R.layout.item_list_item,R.id.itemNameTV,items);
         itemsLV.setAdapter(itemAdapter);
         itemsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View clickView, final int position, long id) {
-
+                //If an item is clicked, a dialog to get the quantity they want is shown
                 final Dialog d = new Dialog(getActivity());
                 d.setContentView(R.layout.quantity_dialog_layout);
                 d.setTitle("Select Quantity");
                 final EditText dialogET = (EditText) d.findViewById(R.id.quantityDialogET);
+
+                //Is supposed to show the keyboard
                 if(dialogET.requestFocus()) {
                     InputMethodManager keyboard = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     keyboard.showSoftInput(dialogET, 0);
                 }
+
                 Button okButton = (Button) d.findViewById(R.id.dialogOKBTN);
                 Button cancel = (Button) d.findViewById(R.id.dialogCancelBTN);
                 okButton.setOnClickListener(new AdapterView.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        //On ok, if it is blank, the add is cancelled
                         if (dialogET.getText().toString().equals("")) {
                             d.cancel();
+                        }else if(Integer.parseInt(dialogET.getText().toString()) == 0){
+                            //If they inputted 0, the add is cancelled
+                            d.cancel();
                         }
+                        //If the input is valid, the item is sent to the main activity with the quantity
                         quantity = Integer.parseInt(dialogET.getText().toString());
                         iReceiver.ItemSend(items.get(position), quantity);
                         d.dismiss();
@@ -88,6 +98,8 @@ public class ItemsFragment extends Fragment {
                     }
                 });
                 d.show();
+
+                //Quantity is reset
                 quantity = 0;
             }
         });

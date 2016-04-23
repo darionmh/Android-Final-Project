@@ -31,9 +31,9 @@ public class StoreManagementCategoriesFragment extends Fragment{
     private String storeName;
 
     public interface StoreManagementCategoriesListener{
-        public ArrayList<String> getCategories();
-        public void renameCategory(String oldName, String newName);
-        public void deleteCategory(String category);
+        ArrayList<String> getCategories();
+        void renameCategory(String oldName, String newName);
+        void deleteCategory(String category);
     }
 
     private StoreManagementCategoriesListener storeManagementCategoriesListener;
@@ -47,8 +47,11 @@ public class StoreManagementCategoriesFragment extends Fragment{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_store_management_categories, container, false);
+
+        //Hides the keyboard
         InputMethodManager keyboard = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         keyboard.hideSoftInputFromWindow(rootView.getWindowToken(), 0);
+
         storeName = getArguments().getString("store_name");
 
         buildListView();
@@ -61,6 +64,8 @@ public class StoreManagementCategoriesFragment extends Fragment{
         buildListView();
     }
 
+    //Method used to build the listView
+    //It is in its own method so that it can be easily updated
     public void buildListView(){
         final ListView categoriesLV = (ListView) rootView.findViewById(R.id.categoriesLV);
         TextView title = (TextView) rootView.findViewById(R.id.StoreNameTV);
@@ -68,10 +73,11 @@ public class StoreManagementCategoriesFragment extends Fragment{
         title.setText(storeName);
         categoryList = storeManagementCategoriesListener.getCategories();
 
-        ArrayAdapter<String> CategoriesAA = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, categoryList);
+        ArrayAdapter<String> CategoriesAA = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, categoryList);
 
         categoriesLV.setAdapter(CategoriesAA);
 
+        //On click, the category is passed to the StoreManagementItemsFragment, which is then shown
         categoriesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -85,6 +91,7 @@ public class StoreManagementCategoriesFragment extends Fragment{
             }
         });
 
+        //On long click, the user is given the option to rename the category, delete it, or cancel
         categoriesLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -140,6 +147,7 @@ public class StoreManagementCategoriesFragment extends Fragment{
         });
     }
 
+    //Method called from main activity to update the categorylist and rebuild the listview
     public void updateListView(ArrayList<String> list) {
         categoryList = list;
         buildListView();

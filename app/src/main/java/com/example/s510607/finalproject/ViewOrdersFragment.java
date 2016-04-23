@@ -31,11 +31,13 @@ public class ViewOrdersFragment extends Fragment {
     public ViewOrdersFragment() {
         // Required empty public constructor
     }
+
     ViewOrdersListener viewOrdersListener;
     public interface ViewOrdersListener{
-        public void getOrders();
-        public void deleteOrder(String customerName, String order);
+        void getOrders();
+        void deleteOrder(String customerName, String order);
     }
+
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
@@ -62,8 +64,11 @@ public class ViewOrdersFragment extends Fragment {
         return view;
     }
 
+    //Method to build listview so it can be update easily
     public void buildLV(){
         Log.d("oops", "building LV");
+
+        //Only builds if the view is not null, onCreateView has been called
         if(view == null)return;
         ListView orderLV = (ListView) view.findViewById(R.id.orderLV);
         ViewOrdersAA viewOrdersAA = new ViewOrdersAA(getContext(), R.layout.order_list_item, R.id.customerNameTV, names, orders);
@@ -71,12 +76,14 @@ public class ViewOrdersFragment extends Fragment {
         orderLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //When you click an order, it asks if you want to delete it
                 final int orderClick = position;
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("Delete order?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                //if yes, the listener deletes it from kinvey
                                 viewOrdersListener.deleteOrder(names.get(orderClick), orders.get(orderClick));
                             }
                         })
@@ -87,10 +94,12 @@ public class ViewOrdersFragment extends Fragment {
         });
     }
 
+    //Method called from main activity to set the order list
     public void setOrders(ArrayList<String> orders){
         this.orders = orders;
     }
 
+    //Method called from main activity to set the name list
     public void setNames(ArrayList<String> names){
         this.names = names;
     }
