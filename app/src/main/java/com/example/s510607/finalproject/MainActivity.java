@@ -2,6 +2,7 @@ package com.example.s510607.finalproject;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -706,7 +707,7 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
 
     //Method called from the StoreManagementItemsFragment when the FloatingActionButton is pressed
     //Opens a dialog to input information for a new item
-    public void openAddItemDialog(View view) {
+    public void openAddItemDialog(View v) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         LayoutInflater li = LayoutInflater.from(this);
         final View dialogView = li.inflate(R.layout.add_item_dialog, null);
@@ -722,13 +723,94 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
                 String desc = itemDescET.getText().toString();
 
                 EditText itemPriceET = (EditText) dialogView.findViewById(R.id.itemPriceET);
-                double price = Double.parseDouble(itemPriceET.getText().toString());
+                String price = itemPriceET.getText().toString();
 
                 //Gets a reference to the current fragment so that the current category can be retrieved
                 android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
                 StoreManagementItemsFragment fragment = (StoreManagementItemsFragment) fragmentManager.findFragmentById(R.id.fragment_container);
 
-                addItem(new Item(name, desc, price), fragment.category);
+                boolean nameError = false;
+                boolean descError = false;
+                boolean priceError = false;
+                if(name.equals("")){
+                    nameError = true;
+                }
+                if(desc.equals("")){
+                    descError = true;
+                }
+                if(price.equals("")){
+                    priceError = true;
+                }
+                if(nameError||descError||priceError){
+                    openAddItemDialog(null,nameError,descError,priceError,name,desc,price);
+                }else{
+                    addItem(new Item(name, desc, Double.parseDouble(price)), fragment.category);
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    //Opens a new dialog with hints in red if they were not previously filled
+    public void openAddItemDialog(Object... objects) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater li = LayoutInflater.from(this);
+        final View dialogView = li.inflate(R.layout.add_item_dialog, null);
+        if(objects.length == 7){
+            EditText itemNameET = (EditText) dialogView.findViewById(R.id.itemNameET);
+            if((boolean)objects[1])itemNameET.setHintTextColor(Color.RED);
+            itemNameET.setText((String)objects[4]);
+
+            EditText itemDescET = (EditText) dialogView.findViewById(R.id.itemDescET);
+            if((boolean)objects[2])itemDescET.setHintTextColor(Color.RED);
+            itemDescET.setText((String)objects[5]);
+
+            EditText itemPriceET = (EditText) dialogView.findViewById(R.id.itemPriceET);
+            if((boolean)objects[3])itemPriceET.setHintTextColor(Color.RED);
+            itemPriceET.setText((String)objects[6]);
+        }
+        builder.setView(dialogView);
+        builder.setTitle("Add Item");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                EditText itemNameET = (EditText) dialogView.findViewById(R.id.itemNameET);
+                String name = itemNameET.getText().toString();
+
+                EditText itemDescET = (EditText) dialogView.findViewById(R.id.itemDescET);
+                String desc = itemDescET.getText().toString();
+
+                EditText itemPriceET = (EditText) dialogView.findViewById(R.id.itemPriceET);
+                String price = itemPriceET.getText().toString();
+
+                //Gets a reference to the current fragment so that the current category can be retrieved
+                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+                StoreManagementItemsFragment fragment = (StoreManagementItemsFragment) fragmentManager.findFragmentById(R.id.fragment_container);
+
+                boolean nameError = false;
+                boolean descError = false;
+                boolean priceError = false;
+                if(name.equals("")){
+                    nameError = true;
+                }
+                if(desc.equals("")){
+                    descError = true;
+                }
+                if(price.equals("")){
+                    priceError = true;
+                }
+                if(nameError||descError||priceError){
+                    openAddItemDialog(null,nameError,descError,priceError,name,desc,price);
+                }else{
+                    addItem(new Item(name, desc, Double.parseDouble(price)), fragment.category);
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -757,7 +839,7 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
 
     //Method called from the StoreManagementCategoriesFragment when the FloatingActionButton is pressed
     //Opens a dialog to input information for a new category
-    public void openAddCategoryDialog(View view) {
+    public void openAddCategoryDialog(View v) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         LayoutInflater li = LayoutInflater.from(this);
         final View dialogView = li.inflate(R.layout.add_category_dialog, null);
@@ -767,7 +849,45 @@ public class MainActivity extends AppCompatActivity implements CartFragment.Cart
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 EditText categoryET = (EditText) dialogView.findViewById(R.id.categoryET);
-                addCategory(categoryET.getText().toString());
+                String categoryName = categoryET.getText().toString();
+                if (categoryName.equals("")) {
+                    openAddCategoryDialog(null, true);
+                } else {
+                    addCategory(categoryName);
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    //Opens a new dialog with hints in red if they were not previously filled
+    public void openAddCategoryDialog(Object... obj) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater li = LayoutInflater.from(this);
+        final View dialogView = li.inflate(R.layout.add_category_dialog, null);
+        if(obj.length == 2){
+            EditText categoryET = (EditText) dialogView.findViewById(R.id.categoryET);
+            categoryET.setHintTextColor(Color.RED);
+        }
+        builder.setView(dialogView);
+        builder.setTitle("Add Category");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                EditText categoryET = (EditText) dialogView.findViewById(R.id.categoryET);
+                String categoryName = categoryET.getText().toString();
+                if (categoryName.equals("")) {
+                    openAddCategoryDialog(null, true);
+                } else {
+                    addCategory(categoryName);
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

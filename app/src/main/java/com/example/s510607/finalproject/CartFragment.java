@@ -71,8 +71,8 @@ public class CartFragment extends Fragment {
 
         //The subtotal, tax, and totals are added to their respective textviews
         subtotalTV.setText(String.format("$%.2f", total));
-        taxTV.setText(String.format("$%.2f", total*0.8475));
-        totalTV.setText(String.format("$%.2f", total*1.8475));
+        taxTV.setText(String.format("$%.2f", total*0.08475));
+        totalTV.setText(String.format("$%.2f", total*1.08475));
 
         return view;
     }
